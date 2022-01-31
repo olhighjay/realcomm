@@ -21,6 +21,7 @@ class CreateBusinessesTable extends Migration
             $table->bigInteger('business_category_id');
             $table->bigInteger('subscription_id');
             $table->integer('bank_account_number')->nullable();
+            $table->integer('low_stock_indicator')->default(2);
             $table->string('bank_account_name')->nullable();
             $table->string('bank_name')->nullable();
             $table->boolean('bank_details_verified')->nullable()->default(false);

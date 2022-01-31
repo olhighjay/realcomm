@@ -46,8 +46,6 @@ class ProductFactory extends Factory
             'description' => $this->faker->text(500),
             'regular_price' => $this->faker->numberBetween(30000,50000),
             'sale_price' => $this->faker->numberBetween(1000,20000),
-            'user_id' => 3,
-            'business_id' => 4,
             'product_specific_id' => $randomStr.$curentSec.$random1.$random2,
             'user_id' => $vendors[$this->faker->numberBetween(0, count($vendors)-1)],
             'business_id' => $businesses[$this->faker->numberBetween(0, count($businesses)-1)],

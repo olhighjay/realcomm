@@ -18,11 +18,11 @@ class CreateProductsTable extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('short_description')->nullable();
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->decimal('regular_price');
             $table->decimal('sale_price')->nullable();
             $table->string('product_specific_id');
-            $table->string('SKU');
+            $table->string('SKU')->nullable();
             $table->enum('stock_status', ['in stock', 'out of stock', 'low stock']);
             $table->boolean('featured')->default(false);
             $table->unsignedInteger('quantity')->default(10);

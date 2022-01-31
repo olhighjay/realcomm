@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\Business;
 use App\Models\Category;
 use App\Models\User;
+use Illuminate\Support\Str;
+use App\Models\Subscription;
 use Illuminate\Support\Facades\Validator;
 use Session;
 use Illuminate\Support\Facades\Storage;
@@ -23,49 +25,79 @@ class ProductController extends Controller
 
     public function index()
     {
-        Session::forget(['productSortName', 'productStatusName', 'productCategory_id', 'productNumberPerPage']);
+        Session::forget(['productSortName', 'productStatusName', 'productCategory_id', 'productNumberPerPage','productStockStatusName', 'productPriceFilter']);
         $page_title = 'Products';
         $crumbs = ['Products' ];
          return view('app-pages.admin.product.index', compact('page_title', 'crumbs'));
     }
 
-    public  function create()
+    public  function create(Request $request, Business $business)
     {
-        $page_title = 'Businesses';
-        $crumbs = ['Businesses', 'Create New Business' ];
-        $urls = ['Businesses' =>'/businesses' ];
-        $businessCategories = Business_category::where('deactivated', false)->get();
-        $vendors = User::where('deactivated', false)->where('role', 'vendor')->get();
-        $subscriptions = Subscription::where('deactivated', false)->get();
-        return view('app-pages.admin.business.create', compact('page_title', 'crumbs', 'urls', 'businessCategories', 'vendors', 'subscriptions'));
+        if(!$business) {
+            return back();
+        }
+        $businessId = $business->id;
+        $page_title = 'Products';
+        $crumbs = ['Products', 'Create New Product' ];
+        $urls = ['Products' =>'/products' ];
+        $categories = Category::where('deactivated', false)->get();
+        // $business = Business::where('deactivated', false)->get();
+        return view('app-pages.admin.product.create', compact('page_title', 'crumbs', 'urls', 'categories', 'businessId'));
     }
 
-    public  function store(Request $request)
+    public  function store(Request $request, Business $business)
     {
         Validator::make(request()->all(), [
              'name'=> 'required',
+             'short_description'=> 'nullable',
              'description'=> 'nullable',
-             'vendor'=> 'required',
-             'category'=> 'required',
-             'subscription'=> 'required',
-             'account_number'=> 'nullable',
-             'account_name'=> 'nullable',
-             'bank_name'=> 'nullable',
+             'regular_price'=> 'required',
+             'sale_price'=> 'nullable',
+             'quantity'=> 'required|min:2',
+             'category'=> 'nullable',
+             
          ]);
         try {
-            $business = new Business();
-            $business->name = request()['name'];
-            $business->description = request()['description'];
-            $business->user_id = request()['vendor'];
-            $business->business_category_id = request()['category'];
-            $business->subscription_id = request()['subscription'];
-            $business->bank_account_number = request()['account_number'];
-            $business->bank_account_name = request()['account_name'];
-            $business->bank_name = request()['bank_name'];
-            $business->save();
+            $array = [1,2,3,4,5,6,7,8,9,0,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+            $randomStr = Str::random(3);
+            $rand = array_rand($array, 2);
+            $random1 = $array[$rand[1]];
+            $random2 = $array[$rand[0]];
+            $t=time();
+            $curentSec = date("s",$t);
+
+            if(request()['quantity'] > 2) {
+                $stock = 'in stock';
+            } else if(request()['quantity'] < 1) {
+                return response()->json([
+                    'message' =>"Quantity must be greater 1"], 200);
+            }else {
+                $stock = 'low stock';
+            }
+
+            if(request()['sale_price']) {
+                $sale_price = request()['sale_price'];
+            } else {
+                $sale_price = request()['regular_price'];
+            }
+
+            $product = new Product();
+            $product->name = request()['name'];
+            $product->slug = Str::slug(request()['name']);
+            $product->description = request()['description'];
+            $product->short_description = request()['short_description'];
+            $product->regular_price = request()['regular_price'];
+            $product->sale_price = $sale_price;
+            $product->user_id = $business->user_id;
+            $product->category_id = request()['category'];
+            $product->product_specific_id = $randomStr.$curentSec.$random1.$random2;
+            $product->stock_status = $stock;
+            $product->quantity = request()['quantity'];
+            $product->business_id = $business->id;
+            $product->save();
     
             return response()->json([
-                'message' => 'New Business created successfully',
+                'message' => 'New Product created successfully',
             ],201);    
             
         } catch (\Throwable $th) {
@@ -86,27 +118,27 @@ class ProductController extends Controller
     
     public function show(Request $request, $id)
     {
-        $page_title = 'Businesses';
-        $crumbs = ['Businesses', 'Create New Business' ];
-        $urls = ['Businesses' =>'/businesses' ];
-        $business = Business::where('id', $id)->where('deactivated', false)->with('user')->with('business_category')->with('subscription')->first();
+        $page_title = 'Products';
+        $crumbs = ['Products', ' Product' ];
+        $urls = ['Products' =>'/products' ];
+        $product = Product::where('id', $id)->where('deactivated', false)->with('business')->with('category')->first();
         // dd($business);
         
         if($request->edit){
-            if(!$business){
+            if(!$product){
                 return response()->json([
                     'message' => 'Error! Invalid User'
                 ], 400);
             }
             return response()->json([
-                'business'=> $business
+                'product'=> $product
             ],200);
         }
 
-        if(!$business){
+        if(!$product){
             return redirect('/');
         }
-         return view('app-pages.admin.business.show', compact('page_title', 'crumbs', 'business', 'urls'));
+         return view('app-pages.admin.product.show', compact('page_title', 'crumbs', 'product', 'urls'));
     }
 
     /**
@@ -117,13 +149,11 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $page_title = 'Businesses';
-        $crumbs = ['Businesses', 'Create New Business' ];
-        $urls = ['Businesses' =>'/businesses' ];
-        $businessCategories = Business_category::where('deactivated', false)->get();
-        $vendors = User::where('deactivated', false)->where('role', 'vendor')->get();
-        $subscriptions = Subscription::where('deactivated', false)->get();
-        return view('app-pages.admin.business.edit', compact('page_title', 'crumbs', 'urls', 'businessCategories', 'vendors', 'subscriptions', 'id'));
+        $page_title = 'Products';
+        $crumbs = ['Products', 'Edit Product' ];
+        $urls = ['Products' =>'/products' ];
+        $categories = Category::where('deactivated', false)->get();
+        return view('app-pages.admin.product.edit', compact('page_title', 'crumbs', 'urls', 'categories', 'id'));
     }
 
     /**
@@ -135,9 +165,9 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $business = Business::where('id', $id)->where('deactivated', false)->with('user')->with('business_category')->with('subscription')->first();
+        $product = Product::where('id', $id)->where('deactivated', false)->with('business')->with('category')->first();
         // dd($business);
-        if(!$business){
+        if(!$product){
             return response()->json([
                 'message' => 'Something went wrong with your request!',
             ],202);
@@ -145,15 +175,16 @@ class ProductController extends Controller
         if(request()['type'] == 'save') {
             Validator::make(request()->all(), [
                 'name'=> 'required',
+                'short_description'=> 'nullable',
                 'description'=> 'nullable',
-                // 'vendor'=> 'required',
-                'category'=> 'required',
-                'subscription'=> 'required',
-                'account_number'=> 'nullable',
-                'account_name'=> 'nullable',
-                'bank_name'=> 'nullable',
-                'logo'=> 'nullable',
+                'category_id'=> 'required',
+                'business_id'=> 'required',
+                'regular_price'=> 'required',
+                'sale_price'=> 'required',
+                'quantity'=> 'required',
+                // 'logo'=> 'nullable',
             ]);
+            
             if($request->logo) {
                 $logo = $request->logo;
                 //get filename with extension
@@ -187,58 +218,79 @@ class ProductController extends Controller
                 $business->logo = $filenametostore;
 
             }
+            if(request()['quantity'] > 2) {
+                $stock = 'in stock';
+            } else if(request()['quantity'] < 1) {
+                return response()->json([
+                    'message' =>"Quantity must be greater 1"], 202);
+            }else {
+                $stock = 'low stock';
+            }
 
-           $business->name = request()['name'];
-           $business->description = request()['description'];
-        //    $business->user_id = request()['vendor'];
-           $business->business_category_id = request()['category'];
-           $business->subscription_id = request()['subscription'];
-           $business->bank_name = request()['bank_name'];
-           $business->bank_account_name = request()['account_name'];
-           $business->bank_account_number = request()['account_number'];
+            if(request()['sale_price']) {
+                $sale_price = request()['sale_price'];
+            } else {
+                $sale_price = request()['regular_price'];
+            }
+
+            $product->name = request()['name'];
+            $product->description = request()['description'];
+            $product->short_description = request()['short_description'];
+            $product->regular_price = request()['regular_price'];
+            $product->sale_price = $sale_price;
+            $product->category_id = request()['category'];
+            $product->stock_status = $stock;
+            $product->quantity = request()['quantity'];
+            $product->save();
+
         } elseif(request()['type'] == 'deactivate') {
-            $business->status = 'inactive';
+            $product->status = 'inactive';
         } elseif(request()['type'] == 'activate') {
-            $business->status = 'active';       
+            $product->status = 'active';       
         } elseif(request()['type'] == 'blacklist') {
-            $business->status = 'blacklisted';       
+            $product->status = 'blacklisted';       
         } elseif(request()['type'] == 'delete') {
-            $business->deactivated = true;
-        }
-        $business->save();
+            $product->deactivated = true;
+        } 
+        $product->save();
 
        return response()->json([
-           'message' => 'Business category updated successfully',
+           'message' => 'Product category updated successfully',
        ],200);
     }
     public function massUpdate(Request $request)
     {
         $ids = request()['ids'];
-        $businesses = Business::whereIn('id', $ids)->where('deactivated', false)->with('user')->with('business_category')->with('subscription')->get();
-        if(count($businesses) < 1){
+        $products = Product::whereIn('id', $ids)->where('deactivated', false)->with('business')->with('category')->get();
+        if(count($products) < 1){
             return response()->json(['message'=> 'Wrong request'],400);
         }
         
         if(request()['type'] == 'deactivate') {
-            foreach ($businesses as $business) {
+            foreach ($products as $product) {
                 # code...
-                $business->status = 'inactive';
-                $business->save();
+                $product->status = 'inactive';
+                $product->save();
             }         
         } elseif(request()['type'] == 'activate') {
-            foreach ($businesses as $business) {
-                $business->status = 'active';
-                $business->save();
+            foreach ($products as $product) {
+                $product->status = 'active';
+                $product->save();
             }         
         }elseif(request()['type'] == 'delete') {
-            foreach ($businesses as $business) {
-                $business->deactivated = true;
-                $business->save();
+            foreach ($products as $product) {
+                $product->deactivated = true;
+                $product->save();
+            }
+        }elseif(request()['type'] == 'stock_status') {
+            foreach ($products as $product) {
+                $product->stock_status = request()['stock_status'];
+                $product->save();
             }
         }
 
        return response()->json([
-           'message' => 'Businesses updated successfully',
+           'message' => 'Products updated successfully',
        ],200);
     }
 
@@ -252,22 +304,43 @@ class ProductController extends Controller
         if (isset($request->search)){
             $search = $request->search;
         }
+        if (isset($request->price_filter)){
+            $price_filter = $request->price_filter;
+        }
         if (isset($request->direction)){
             $direction = $request->direction;
         }
-        // $query = Business::has('user')->first();
-        // dd($query->user->first_name);
-        $query = Product::query()->with('business')->with('category');
-        // dd($query);
-        $query2 = $query->where('deactivated', false);
+        $query = Product::query();
+        // dd($query->get());
+        $query2 = $query->with('category')->with('business')->where('deactivated', false);
             // If there is a search query in the request or in the session, get the result from database
         if (isset($search) &&  $request->search != '') {
             $query2->where(function($query2) use ($search){
                 // $query2 = $query2->where('first_name', 'LIKE', "%{$search}%")->orWhere('last_name',  'LIKE', "%{$search}%")->orWhere('email',  'LIKE', "%{$search}%")->orWhere('phone_number',  'LIKE', "%{$search}%");
-                $query2 = $query2->where('name', 'LIKE', "%{$search}%");
+                $query2 = $query2->where('name', 'LIKE', "%{$search}%")->orWhereHas('business', function($query2) use ($search){
+                    $query2->where('name', 'LIKE', "%{$search}%");
+                });
             });
         }
 
+        if ((isset($price_filter) &&  $request->price_filter != '') || Session::has('productPriceFilter')) {
+            if(isset($price_filter)){
+                $request->session()->put('productPriceFilter', $price_filter);
+            }
+            $price_filterz = $request->session()->get('productPriceFilter');
+            $priceFilters = explode("-",$price_filterz);
+            $query2->where(function($query2) use ($priceFilters){
+                if($priceFilters[0] > 0 && $priceFilters[1] > 0  ) {
+                    $query2 = $query2->where('sale_price', '>=', $priceFilters[0])->where('sale_price', '<=', $priceFilters[1]);                  
+                } elseif($priceFilters[0] > 0 ) {
+                    $query2 = $query2->where('sale_price', '>=', $priceFilters[0]);                  
+                }elseif($priceFilters[1] > 0 ) {
+                    $query2 = $query2->where('sale_price', '<=', $priceFilters[1]);                  
+                }elseif($priceFilters[0] == 0 && $priceFilters[1] == 0) {
+                    $query2 = $query2;                  
+                }
+            });
+        }
         // If there is a new filter or sorted query in the request, save them in the session and run the query through them
         if (isset($name) && $name != 'status' && $name != 'stock_status' && $name != 'no_per_page' && $name != 'category_id' && $name != '') {
             // $request->session()->forget('adminStatusName');

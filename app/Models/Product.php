@@ -21,6 +21,11 @@ class Product extends Model
         });
     }
 
+    protected $casts = [
+        'id' => 'string'
+    ];
+
+
     public function category()
     {
         return $this->belongsTo(Category::class);

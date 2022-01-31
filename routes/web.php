@@ -111,13 +111,12 @@ Route::domain('admin.' . config('app.url'))->group(function () {
     // Product  
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/products/products', [ProductController::class, 'refreshProduct']);
-    Route::get('products/new-product', [ProductController::class, 'create'])->name('product.create');
-    Route::post('/products', [ProductController::class, 'store'])->name('product.register');
+    Route::post('/products/mass-update', [ProductController::class, 'massUpdate'])->name('product.mass.update');
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.show');
     Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('product.edit');
     Route::post('/products/{id}/edit', [ProductController::class, 'update'])->name('product.update');
-    Route::post('/products/mass-update', [ProductController::class, 'massUpdate'])->name('product.mass.update');
-
+    Route::get('products/{business}/new-product', [ProductController::class, 'create'])->name('product.create');
+    Route::post('/products/{business}', [ProductController::class, 'store'])->name('product.register');
 
     // Route::resource('photos', PhotoController::class)->only([
     //   'index', 'show'

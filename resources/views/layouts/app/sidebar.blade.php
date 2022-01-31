@@ -127,10 +127,17 @@
           </li>
 
           
+          <li class="@if(request()->is('products') || request()->is('products/*'))active @endif">
+            <a class="sidenav-item-link" href="/products" >
+              <i class="mdi mdi-view-dashboard-outline"></i>
+              <span class="nav-text">Products</span> 
+            </a>
+          </li>  
+          
           <li class="@if(request()->is('subscriptions') || request()->is('subscriptions/*'))active @endif">
             <a class="sidenav-item-link" href="/subscriptions" >
               <i class="mdi mdi-view-dashboard-outline"></i>
-              <span class="nav-text">Subscription</span> 
+              <span class="nav-text">Subscriptions</span> 
             </a>
           </li>  
         

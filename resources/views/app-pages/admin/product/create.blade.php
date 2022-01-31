@@ -6,10 +6,10 @@
             <div class="col-lg-7 col-md-9 col-sm-12 mt-4 mb-4">
                 <div class="card card-default">
                     <div class="card-header card-header-border-bottom">
-                        <h2>Create New Business </h2>
+                        <h2>Create New Product </h2>
                     </div>
                     <div class="card-body">
-                        <business-reg-component :vendors="{{ $vendors }}" :categories="{{ $businessCategories }}" :subscriptions="{{ $subscriptions }}"></business-reg-component>
+                        <product-reg-component :categories="{{ $categories }}" :business="'{{ $businessId }}'"></product-reg-component>
                     </div>
                 </div>
             </div>

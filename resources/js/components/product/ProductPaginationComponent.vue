@@ -31,7 +31,7 @@
         
          <!-- last page which is represented by the the sign >> and it does not appears if the current page is the last page -->
         <span v-if="(clickedPagination && newIncomingData.next_page_url !== null) || (!clickedPagination && incomingData.next_page_url !== null)" class="custom-pagination pagination-info pagination align-items-stretch d-flex">
-            <li class="page-item"><a @click="getPaginated(`${modelUrl}?search=${searchQuery}&&page=${clickedPagination ? newIncomingData.last_page : incomingData.last_page}`)" class="page-link"  href="#"> &raquo; </a></li>
+            <li class="page-item"><a @click="getPaginated(`${modelUrl}?search=${searchQuery}&&price_filter=${minPrice}-${maxPrice}&&page=${clickedPagination ? newIncomingData.last_page : incomingData.last_page}`)" class="page-link"  href="#"> &raquo; </a></li>
         </span> 
       </ul>
       <div v-if="clickedPagination === true">
@@ -55,6 +55,12 @@ export default {
     incomingData: {
       type: Object,
       required: true,
+    },
+    minPrice: {
+      required: false,
+    },
+    maxPrice: {
+      required: false,
     },
     searchQuery: {
       type: String,

@@ -21,6 +21,7 @@ window.Vue = require("vue").default;
 // REUSABLE
 Vue.component('custom-pagination', require('./components/reusable/PaginationComponent.vue').default);
 Vue.component('search', require('./components/reusable/SearchComponent.vue').default);
+Vue.component('price-filter', require('./components/reusable/PriceFilterComponent.vue').default);
 Vue.component('showonpage', require('./components/reusable/ShowOnPageComponent.vue').default);
 Vue.component('sorting', require('./components/reusable/SortingByComponent.vue').default);
 Vue.component('element-overlay', require('./components/reusable/ElementOverlayComponent.vue').default);
