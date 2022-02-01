@@ -14,7 +14,7 @@
                 <i class="mdi mdi-account"></i>
             </span>
         </div>
-        <input :disabled="loading !== 'neutral'" id="name" name="name" type="text" :class="{'is-invalid' : nameErrors.length > 0, 'is-inv' : nameErrors.length > 0, 'form-control':true }" placeholder="John" aria-label="name" v-model="name" @input="disabling(name, nameErrors )">
+        <input :disabled="loading !== 'neutral'" id="name" name="name" type="text" :class="{'is-invalid' : nameErrors.length > 0, 'is-inv' : nameErrors.length > 0, 'form-control':true }" placeholder="Fashion" aria-label="name" v-model="name" @input="disabling(name, nameErrors )">
       </div>
       <ul v-if="nameErrors.length > 0" class="mb-3 form-error-list"  >
         <li v-for="nameError in nameErrors" :key="nameError" class="form-error" > {{ nameError   }}</li>

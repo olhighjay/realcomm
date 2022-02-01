@@ -15,7 +15,7 @@
                 <i class="mdi mdi-account"></i>
             </span>
         </div>
-        <input :disabled="loading !== 'neutral'" id="name" name="name" type="text" :class="{'is-invalid' : nameErrors.length > 0, 'is-inv' : nameErrors.length > 0, 'form-control':true }" placeholder="John" aria-label="name" v-model="name" @input="disabling(name, nameErrors )">
+        <input :disabled="loading !== 'neutral'" id="name" name="name" type="text" :class="{'is-invalid' : nameErrors.length > 0, 'is-inv' : nameErrors.length > 0, 'form-control':true }" placeholder="Fashion" aria-label="name" v-model="name" @input="disabling(name, nameErrors )">
       </div>
       <ul v-if="nameErrors.length > 0" class="mb-3 form-error-list"  >
         <li v-for="nameError in nameErrors" :key="nameError" class="form-error" > {{ nameError   }}</li>
@@ -164,55 +164,4 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.channel-avatar {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  cursor: pointer;
-  /* border: 1px solid rgba(0, 0, 0, 0.125); */
-}
-
-.image {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.channel-avatar-overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  opacity: 0;
-  transition: .3s ease;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.channel-avatar:hover .channel-avatar-overlay {
-  opacity: 1;
-}
-
-.icon {
-  color: white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.mdi-camera:hover {
-  color: #eee;
-} 
-
-.mdi-camera:before {
-    font-size: xx-large;
-}
-</style>
 

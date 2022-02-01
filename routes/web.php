@@ -90,12 +90,12 @@ Route::domain('admin.' . config('app.url'))->group(function () {
     // Business Category
     Route::get('/business-categories', [BusinessCategoryController::class, 'index']);
     Route::get('/business/categories', [BusinessCategoryController::class, 'refreshBC']);
-    Route::get('business-categories/new-category', [BusinessCategoryController::class, 'create'])->name('BC.create');
-    Route::post('/business-categories', [BusinessCategoryController::class, 'store'])->name('BC.register');
-    Route::get('/business-categories/{id}', [BusinessCategoryController::class, 'show'])->name('buyers.show');
-    Route::get('/business-categories/{id}/edit', [BusinessCategoryController::class, 'edit'])->name('buyers.edit');
+    Route::get('business-categories/new-category', [BusinessCategoryController::class, 'create'])->name('bc.create');
+    Route::post('/business-categories', [BusinessCategoryController::class, 'store'])->name('bc.register');
+    Route::get('/business-categories/{id}', [BusinessCategoryController::class, 'show'])->name('bc.show');
+    Route::get('/business-categories/{id}/edit', [BusinessCategoryController::class, 'edit'])->name('bc.edit');
     Route::post('/business-categories/{id}/edit', [BusinessCategoryController::class, 'update'])->name('bc.update');
-    Route::post('/business-categories/mass-update', [BusinessCategoryController::class, 'massUpdate'])->name('buyers.mass.update');
+    Route::post('/business-categories/mass-update', [BusinessCategoryController::class, 'massUpdate'])->name('bc.mass.update');
 
     
     // Subscription
@@ -117,6 +117,17 @@ Route::domain('admin.' . config('app.url'))->group(function () {
     Route::post('/products/{id}/edit', [ProductController::class, 'update'])->name('product.update');
     Route::get('products/{business}/new-product', [ProductController::class, 'create'])->name('product.create');
     Route::post('/products/{business}', [ProductController::class, 'store'])->name('product.register');
+
+    
+    // Product Category
+    Route::get('/product-categories', [CategoryController::class, 'index']);
+    Route::get('/product/categories', [CategoryController::class, 'refreshPC']);
+    Route::get('product-categories/new-category', [CategoryController::class, 'create'])->name('pc.create');
+    Route::post('/product-categories', [CategoryController::class, 'store'])->name('pc.register');
+    Route::get('/product-categories/{id}', [CategoryController::class, 'show'])->name('pc.show');
+    Route::get('/product-categories/{id}/edit', [CategoryController::class, 'edit'])->name('pc.edit');
+    Route::post('/product-categories/{id}/edit', [CategoryController::class, 'update'])->name('pcc.update');
+    Route::post('/product-categories/mass-update', [CategoryController::class, 'massUpdate'])->name('pc.mass.update');
 
     // Route::resource('photos', PhotoController::class)->only([
     //   'index', 'show'

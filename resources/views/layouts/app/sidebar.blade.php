@@ -95,7 +95,7 @@
           <li  class="has-sub @if(request()->is('business-categories') || request()->is('business-categories/*') || request()->is('businesses') || 
           request()->is('businesses/*'))active @endif expand" >
             <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse" data-target="#business_management"
-              aria-expanded="false" aria-controls="user_management">
+              aria-expanded="false" aria-controls="business_management">
               <i class="mdi mdi-view-dashboard-outline"></i>
               <span class="nav-text">Business Management</span> <b class="caret"></b>
             </a>
@@ -126,13 +126,39 @@
             </ul>
           </li>
 
-          
-          <li class="@if(request()->is('products') || request()->is('products/*'))active @endif">
-            <a class="sidenav-item-link" href="/products" >
-              <i class="mdi mdi-view-dashboard-outline"></i>
-              <span class="nav-text">Products</span> 
-            </a>
-          </li>  
+          <li  class="has-sub @if(request()->is('product-categories') || request()->is('product-categories/*') || request()->is('products') || 
+            request()->is('products/*'))active @endif expand" >
+              <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse" data-target="#product_management"
+                aria-expanded="false" aria-controls="product_management">
+                <i class="mdi mdi-view-dashboard-outline"></i>
+                <span class="nav-text">Product Management</span> <b class="caret"></b>
+              </a>
+              <ul  class="collapse"  id="product_management"
+                data-parent="#sidebar-menu">
+                <div class="sub-menu">
+                    
+                  <li class="@if(request()->is('products') || request()->is('products/*'))active @endif">
+                    <a class="sidenav-item-link" href="/products">
+                      <span class="nav-text">Product</span>
+                      
+                      <span class="badge badge-success">new</span>
+                      
+                    </a>
+                  </li>
+                    
+                    <li  class="@if(request()->is('product-categories') || request()->is('product-categories/*'))active @endif" >
+                      <a class="sidenav-item-link" href="/product-categories">
+                        <span class="nav-text">Product Category</span>
+                        
+                      </a>
+                    </li>
+      
+                  
+                    
+                  
+                </div>
+              </ul>
+            </li>
           
           <li class="@if(request()->is('subscriptions') || request()->is('subscriptions/*'))active @endif">
             <a class="sidenav-item-link" href="/subscriptions" >

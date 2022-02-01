@@ -81,10 +81,9 @@ class BusinessCategoryController extends Controller
             ],200);
         }
 
-        if(!$admin){
+        if(!$bc){
             return redirect('/');
         }
-        //  return view('app-pages.admin.business-category.show', compact('page_title', 'crumbs', 'bc', 'urls'));
     }
 
     /**

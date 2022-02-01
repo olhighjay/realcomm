@@ -95,6 +95,14 @@ Vue.component('product-category-filter', require('./components/product/ProductCa
 Vue.component('product-pagination', require('./components/product/ProductPaginationComponent.vue').default);
 
 
+// PRODUCT CATEGORY
+Vue.component('pc-reg-component', require('./components/product-category/PCRegComponent.vue').default);
+Vue.component('pc-edit-component', require('./components/product-category/PCEditComponent.vue').default);
+Vue.component('pc-table-component', require('./components/product-category/PCTableComponent.vue').default);
+Vue.component('pc-filter', require('./components/product-category/PCFilterByComponent.vue').default);
+Vue.component('pc-pagination', require('./components/product-category/PCPaginationComponent.vue').default);
+
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

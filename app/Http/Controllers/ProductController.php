@@ -236,6 +236,7 @@ class ProductController extends Controller
             $product->name = request()['name'];
             $product->description = request()['description'];
             $product->short_description = request()['short_description'];
+            $product->slug = Str::slug(request()['name']);
             $product->regular_price = request()['regular_price'];
             $product->sale_price = $sale_price;
             $product->category_id = request()['category'];

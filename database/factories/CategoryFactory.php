@@ -27,6 +27,7 @@ class CategoryFactory extends Factory
         return [
             'name' => $category_name,
             'slug' => $slug,
+            'description' => $this->faker->text(500),
             'status' => 'active',
             'deactivated' => false,
         ];

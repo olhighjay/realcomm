@@ -6,7 +6,7 @@
             <div class="col-lg-7 col-md-9 col-sm-12 mt-4 mb-4">
                 <div class="card card-default">
                     <div class="card-header card-header-border-bottom">
-                        <h2>Edit Admin </h2>
+                        <h2>Edit Category </h2>
                     </div>
                     <div class="card-body">
                         <bc-edit-component :id="{{ $id }}"></bc-edit-component>
