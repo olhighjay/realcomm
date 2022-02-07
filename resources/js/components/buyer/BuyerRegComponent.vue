@@ -108,7 +108,115 @@
             </li>
           </ul>
       </div>
-      <label class="text-dark font-weight-medium" for="address">Address</label>
+
+      <label class="text-dark font-weight-medium" for="dob">Date of Birth</label>
+      <div class="input-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text">
+                  <i class="mdi mdi-calendar"></i> 
+              </span>
+          </div>
+          <input :disabled="loading !== 'neutral'" id="dob" type="date" name="dob" :max="new Date().toISOString().slice(0, 10)" aria-label="dob" v-model="dob" class="form-control">
+      </div>
+      
+    <label class="text-dark font-weight-medium" for="address">Address</label>
+    <div class="form-group" id="address">
+      
+      <FormulateInput
+        type="group"
+        v-model="addresses"
+        name="addresses"
+        label="Maximum of 5 addresses"
+        help="The first address will be your primary address"
+        add-label="+ Add Address"
+        :repeatable="true"
+        :limit="limit"
+        validation = 'required'
+        
+      >
+      <div class="order">
+        <FormulateInput
+          type="text"
+          name="address"
+          label="Address"
+          placeholder="Address"
+          validation="required"
+          :validation-messages="{
+            required: 'Address is required.'
+          }"
+         @change = "updateAddress"
+        />
+      </div>
+      <div class="order">
+        <FormulateInput
+          type="text"
+          name="city"
+          label="City"
+          placeholder="City"
+          validation="required"
+          :validation-messages="{
+            required: 'City is required.'
+          }"
+          @change = "updateAddress"
+        />
+      </div>
+      <div class="order">
+        <FormulateInput
+          name="state"
+          type="select" 
+          label="State" 
+          placeholder="Select a state"
+          validation="required" 
+          :validation-messages="{
+            required: 'State is required.'
+          }"
+      @change = "updateAddress"
+          :options="{
+            vanilla: 'Vanilla', 
+            chocolate: 'Chocolate', 
+            strawberry: 'Strawberry', 
+            pineapple: 'Pineapple',
+            vanila: 'Vanilla', 
+            chcolae: 'Chocolate', 
+            strawbrry: 'Strawberry', 
+            pieappe: 'Pineapple',
+            vanill: 'Vanilla', 
+            choclate: 'Chocolate', 
+            strawbery: 'Strawberry', 
+            pineappe: 'Pineapple',
+            vana: 'Vanilla', 
+            choat: 'Chocolate', 
+            strawerry: 'Strawberry', 
+            pineaple: 'Pineapple',
+            vnilla: 'Vanilla', 
+            chcolate: 'Chocolate', 
+            srwberry: 'Strawberry', 
+            pieaple: 'Pineapple',
+            vanla: 'Vanilla', 
+            chclate: 'Chocolate', 
+            stwberry: 'Strawberry', 
+            pinaple: 'Pineapple',
+            anila: 'Vanilla', 
+            ocolate: 'Chocolate', 
+            awberry: 'Strawberry', 
+            peapple: 'Pineapple',
+            vaia: 'Vanilla', 
+            clate: 'Chocolate', 
+            berry: 'Strawberry', 
+            ppple: 'Pineapple',
+            }" 
+        />      
+      </div>
+    </FormulateInput>
+      <ul v-if="addressesErrors.length > 0" class="mb-3 form-error-list"  >
+        <li class="form-error"> {{ addressesErrors }}</li>
+      </ul>
+      <!-- <ul v-if="addressesErrors.length > 0" class="mb-3 form-error-list"  >
+        <li v-for="addressesError in addressesErrors" :key="addressesError" class="form-error"> {{ addressesError }}</li>
+      </ul> -->
+    </div>
+
+      <!-- <label class="text-dark font-weight-medium" for="address">Address</label>
       <div class="input-group">
           <div class="input-group-prepend">
               <span class="input-group-text">
@@ -171,17 +279,7 @@
       </div>
       <ul v-if="stateErrors.length > 0" class="mb-3 form-error-list"  >
         <li v-for="stateError in stateErrors" :key="stateError" class="form-error"> {{ stateError }}</li>
-      </ul>
-
-      <label class="text-dark font-weight-medium" for="dob">Date of Birth</label>
-      <div class="input-group">
-          <div class="input-group-prepend">
-              <span class="input-group-text">
-                  <i class="mdi mdi-calendar"></i> 
-              </span>
-          </div>
-          <input :disabled="loading !== 'neutral'" id="dob" type="date" name="dob" :max="new Date().toISOString().slice(0, 10)" aria-label="dob" v-model="dob" class="form-control">
-      </div>
+      </ul> --> 
 
       <button v-if="loading === 'neutral'" type="submit" class="  btn btn-primary mb-4" :disabled="disable"> Create</button>
       <button v-else-if="loading === 'loading'" disabled class="buttonload btn btn-primary">Loading.. <i class=" ml-2 fa fa-circle-o-notch fa-spin fa-1x"></i></button>
@@ -203,40 +301,59 @@ export default {
       phone_number: '',
       role: '',
       gender: 'male',
-      address: '',
-      state: '',
       dob: '',
       firstnameErrors: [],
       lastnameError: '',
       emailErrors: [],
       phoneNumberErrors: [],
       roleErrors: [],
-      addressErrors: [],
-      stateErrors: [],
+      addressesErrors: '',
       disable: false,
       button_clicked: false,
       loading: 'neutral',
       successful: false,
-      failed: false
+      failed: false,
+      limit: 2,
+      addresses : [],
     }
   },
   methods: {
+    updateAddress() {
+      // console.log(this.formData.addresses?.[0]);
+      var al = this.addresses?.length;
+      if(this.addresses?.length > 0 && this.addresses?.length < 5 && this.addresses[al-1]?.address?.length > 0 && this.addresses[al-1]?.city?.length > 0 && this.addresses[al-1]?.state?.length > 0)
+      {
+        this.limit = this.addresses.length + 1
+        console.log(this.addresses.length);
+        console.log(this.limit);
+      }
+
+      // if(this.addressData.addresses?.length > 1){
+      //   const map2 = this.addressData.addresses.map(x => {
+      //     JSON.stringify(x).toLowerCase() == JSON.stringify(this.addressData.addresses[1]).toLowerCase();
+      //   jay.push(x);})
+      // }
+      // console.log(jay);
+    },
     handleSubmit() {
       this.firstnameErrors= [];
       this.lastnameError = '';
       this.emailErrors= [];
       this.phoneNumberErrors = [];
       this.roleErrors = [];
-      this.addressErrors = [];
-      this.stateErrors = [];
+      this.addressesErrors = '';
       this.checkErrors();
       this.button_clicked = true;
       this.loading = 'neutral';
       this.successful= false;
       this.failed= false;
+      console.log('here dey');
+      console.log(this.addressesErrors);
 
       var data = {};
-      if(this.button_clicked && this.firstnameErrors.length < 1 && this.emailErrors.length < 1  && this.roleErrors.length < 1 && this.phoneNumberErrors.length < 1 && this.lastnameError.length < 1 && this.addressErrors.length < 1 && this.stateErrors.length < 1) {
+      if(this.button_clicked && this.firstnameErrors.length < 1 && this.emailErrors.length < 1  && this.roleErrors.length < 1 && this.phoneNumberErrors.length < 1 && this.lastnameError.length < 1 && this.addressesErrors?.length < 1) {
+      console.log('here nkor 1');
+      
         data = {
           first_name: this.first_name,
           middle_name: this.middle_name ,
@@ -245,11 +362,11 @@ export default {
           phone_number: this.phone_number,
           role: this.role,
           gender: this.gender,
-          address: this.address,
-          state: this.state,
           dob: this.dob,
+          addresses: this.addresses,
           type: 'save'
         }
+        console.log(this.addressesErrors);
 
         var url = '';
         url = '/buyers'
@@ -272,7 +389,7 @@ export default {
               this.disable = false;
             }, 1000);
         })
-      } 
+      }
      
     },
     disabling(field, fieldError) {
@@ -289,13 +406,12 @@ export default {
             this.phoneNumberErrors= [];
           } else if(field === this.role) {
             this.roleErrors= [];
-          } else if(field === this.address) {
-            this.addressErrors= [];
-          } else if(field === this.state) {
-            this.stateErrors= [];
+          } else if(field === this.addresses) {
+            this.addressesErrors= '';
           }
 
-          if(this.firstnameErrors.length < 1 && this.emailErrors.length < 1 && this.lastnameError.length < 1 && this.phoneNumberErrors.length < 1 && this.roleErrors.length < 1 && this.addressErrors.length < 1 && this.stateErrors.length < 1) {
+          if(this.firstnameErrors.length < 1 && this.emailErrors.length < 1 && this.lastnameError.length < 1 && this.phoneNumberErrors.length < 1 && this.roleErrors.length < 1 && this.addressesErrors?.length < 1) {
+            
             this.disable = false;
           }
           
@@ -305,11 +421,11 @@ export default {
       }
     },
     emptyField() {
-      
       if (this.button_clicked) {
         this.checkErrors();
-        if(this.firstnameErrors.length < 1 && this.emailErrors.length < 1 && this.lastnameError.length < 1 && this.phoneNumberErrors.length < 1 && this.roleErrors.length < 1 && this.addressErrors.length < 1 && this.stateErrors.length < 1) {
-            this.disable = false;
+        var strangeError;
+        if(this.firstnameErrors.length < 1 && this.emailErrors.length < 1 && this.lastnameError.length < 1 && this.phoneNumberErrors.length < 1 && this.roleErrors.length < 1 && this.addressesErrors?.length < 1) {
+          this.disable = false;
         }
       }
       
@@ -323,6 +439,189 @@ export default {
       return re.test(phone_number);
     },
     checkErrors() {
+      console.log(this.addresses?.length);
+      console.log(this.addresses);
+        // check address error
+      // if(this.addresses?.length > 0) {
+      //   console.log('here gangan');
+      //   for(let i=0; i<this.addresses.length; i++) {
+      //       console.log(this.addresses[i]);
+      //       console.log(this.addresses[i].address);
+      //       console.log(this.addresses[i].city);
+      //       console.log(this.addresses[i].state);
+      //       console.log(this.addressesErrors);
+      //     if(!this.addresses[i].address || this.addresses[i].address.length < 1 || !this.addresses[i].city || this.addresses[i].city.length < 1 || !this.addresses[i].state || this.addresses[i].state.length < 1) {
+      //       console.log('address them zero');
+      //       if(this.addressesErrors?.length > 0 && i > 0){
+      //         this.addressesErrors[ i-1] = 'Address field is required';
+      //         // this.addressesErrors[i - 1] = 'Address field is required';
+      //       console.log('address them first');
+      //       console.log(this.addressesErrors);
+      //       } else {
+      //         this.addressesErrors[i] = 'Address field is required';
+      //       console.log('address them second');
+      //       console.log(this.addressesErrors);
+      //       }
+      //       console.log('address them');
+      //     } else {
+      //         var commonError;
+      //       if(this.addressesErrors?.length > 0 && i > 0){
+      //         // var commonError = this.addressesErrors.find(err => err == "nothing");
+      //         for(let j=0; j<this.addressesErrors.length; j++) {
+      //           commonError = this.addressesErrors[j] == "nothing" ? 1 : ''
+      //         console.log(commonError);
+      //         }
+      //         this.addressesErrors[ i-1] = "nothing";m  
+      //         // this.addressesErrors[i - 1] = 'Address field is required';
+      //       console.log('address them third');
+      //       console.log(this.addressesErrors);
+      //       } else {
+      //       this.addressesErrors[i] = "nothing";
+      //       console.log('address them fourth');
+      //       console.log(this.addressesErrors);
+      //       }
+      //     }
+      //   };
+      // }
+
+      if(this.addresses?.length > 0) {
+        console.log('here gangan');
+        var updatedAddressList = this.addresses.map(element => JSON.stringify(element).toLowerCase());
+        var addressExists = updatedAddressList.some((val, i) => updatedAddressList.indexOf(val) !== i);
+        console.log(addressExists);
+        for(let i=0; i<this.addresses.length; i++) {
+          if(!this.addresses[i].address || this.addresses[i].address.length < 1 || !this.addresses[i].city || this.addresses[i].city.length < 1 || !this.addresses[i].state || this.addresses[i].state.length < 1) {
+            console.log('address them zero');
+            this.addressesErrors = 'Address field is required';
+              console.log(this.addressesErrors);
+          } else {
+            if(this.addressesErrors?.length > 0) {
+              if(this.addressesErrors == 'Address field is required'  && i == 1 ){
+                if(!this.addresses[i-1]?.address || this.addresses[i-1]?.address.length < 1 || !this.addresses[i-1]?.city || this.addresses[i-1]?.city.length < 1 || !this.addresses[i-1]?.state || this.addresses[i-1]?.state.length < 1) {
+                  this.addressesErrors == 'Address field is required'
+                }else if(this.addresses[i].address && this.addresses[i].address.length > 0 && this.addresses[i].city && this.addresses[i].city.length > 0 && this.addresses[i].state && this.addresses[i].state.length > 0) {
+                  if(addressExists) {
+                    this.addressesErrors = 'There is a duplicate of an address'
+                  } else {
+                    this.addressesErrors = ''; 
+                  }
+                } else {
+                  this.addressesErrors;
+                }
+              }
+              else if(this.addressesErrors == 'Address field is required' && i == 2){
+                if(!this.addresses[i-1]?.address || this.addresses[i-1]?.address.length < 1 || !this.addresses[i-1]?.city || this.addresses[i-1]?.city.length < 1 || !this.addresses[i-1]?.state || this.addresses[i-1]?.state.length < 1 || !this.addresses[i-2]?.address || this.addresses[i-2]?.address.length < 1 || !this.addresses[i-2]?.city || this.addresses[i-2]?.city.length < 1 || !this.addresses[i-2]?.state || this.addresses[i-2]?.state.length < 1) {
+                  this.addressesErrors == 'Address field is required'
+                } else if(this.addresses[i].address && this.addresses[i].address.length > 0 && this.addresses[i].city && this.addresses[i].city.length > 0 && this.addresses[i].state && this.addresses[i].state.length > 0) {
+                  if(addressExists) {
+                    this.addressesErrors = 'There is a duplicate of an address'
+                  } else {
+                    this.addressesErrors = ''; 
+                  }
+                } else {
+                  this.addressesErrors;
+                }
+              }
+              else if(this.addressesErrors == 'Address field is required' && i == 3){
+                if(!this.addresses[i-1]?.address || this.addresses[i-1]?.address.length < 1 || !this.addresses[i-1]?.city || this.addresses[i-1]?.city.length < 1 || !this.addresses[i-1]?.state || this.addresses[i-1]?.state.length < 1 || !this.addresses[i-2]?.address || this.addresses[i-2]?.address.length < 1 || !this.addresses[i-2]?.city || this.addresses[i-2]?.city.length < 1 || !this.addresses[i-2]?.state || this.addresses[i-2]?.state.length < 1 || !this.addresses[i-3]?.address || this.addresses[i-3]?.address.length < 1 || !this.addresses[i-3]?.city || this.addresses[i-3]?.city.length < 1 || !this.addresses[i-3]?.state || this.addresses[i-3]?.state.length < 1) {
+                  this.addressesErrors == 'Address field is required'
+                }else if(this.addresses[i].address && this.addresses[i].address.length > 0 && this.addresses[i].city && this.addresses[i].city.length > 0 && this.addresses[i].state && this.addresses[i].state.length > 0) {
+                  if(addressExists) {
+                    this.addressesErrors = 'There is a duplicate of an address'
+                  } else {
+                    this.addressesErrors = ''; 
+                  }
+                } else {
+                  this.addressesErrors;
+                }
+              }
+              else if(this.addressesErrors == 'Address field is required' && i == 4){
+                if(!this.addresses[i-1]?.address || this.addresses[i-1]?.address.length < 1 || !this.addresses[i-1]?.city || this.addresses[i-1]?.city.length < 1 || !this.addresses[i-1]?.state || this.addresses[i-1]?.state.length < 1 || !this.addresses[i-2]?.address || this.addresses[i-2]?.address.length < 1 || !this.addresses[i-2]?.city || this.addresses[i-2]?.city.length < 1 || !this.addresses[i-2]?.state || this.addresses[i-2]?.state.length < 1 || !this.addresses[i-3]?.address || this.addresses[i-3]?.address.length < 1 || !this.addresses[i-3]?.city || this.addresses[i-3]?.city.length < 1 || !this.addresses[i-3]?.state || this.addresses[i-3]?.state.length < 1 || !this.addresses[i-4]?.address || this.addresses[i-4]?.address.length < 1 || !this.addresses[i-4]?.city || this.addresses[i-4]?.city.length < 1 || !this.addresses[i-4]?.state || this.addresses[i-4]?.state.length < 1) {
+                  this.addressesErrors == 'Address field is required'
+                }else if(this.addresses[i].address && this.addresses[i].address.length > 0 && this.addresses[i].city && this.addresses[i].city.length > 0 && this.addresses[i].state && this.addresses[i].state.length > 0) {
+                  if(addressExists) {
+                    this.addressesErrors = 'There is a duplicate of an address'
+                  } else {
+                    this.addressesErrors = ''; 
+                  }
+                } else {
+                  this.addressesErrors;
+                }
+              }
+              else if(addressExists) {
+                this.addressesErrors = 'There is a duplicate of an address'
+              } else {
+                this.addressesErrors = ''; 
+              }
+            } else {
+              if(addressExists) {
+                this.addressesErrors = 'There is a duplicate of an address'
+              } else {
+                this.addressesErrors = ''; 
+              }
+              console.log(this.addressesErrors);
+            } console.log(this.addresses.state);
+          }
+        };
+      } else {
+        this.addressesErrors = 'At least one address is required';
+      } 
+
+
+
+        // check address error
+      // if(this.addresses?.length > 0) {
+      //   console.log('here gangan');
+      //   this.addresses.map(address => {
+      //     if(!address.address || address.address.length < 1 || !address.city || address.city.length < 1 || !address.state || address.state.length < 1) {
+      //       if(this.addressesErrors.length > 0){
+      //         this.addressesErrors[0] = 'Address field is required';
+      //         // this.addressesErrors[this.addressesErrors.length - 1] = 'Address field is required';
+      //       console.log('address them first');
+      //       console.log(this.addressesErrors);
+      //       } else {
+      //         this.addressesErrors[0] = 'Address field is required';
+      //       console.log('address them second');
+      //       console.log(this.addressesErrors);
+      //       }
+      //       console.log('address them');
+      //     } else {
+      //       this.addressesErrors = [];
+      //     }
+      //   });
+      //   console.log(this.addressesErrors);
+      // } else if(this.addresses?.length < 1) {
+      //   this.addressesErrors = ['At least one address is required'];
+      // } else{
+      //   this.addressesErrors = [];
+      // }
+      
+        //check address error
+      // if(this.addresses?.length > 0) {
+      //   console.log('here gangan');
+      //   this.addresses.map(address => {
+      //     if(address.address == undefined || address.address.length < 1 || address.city == undefined || address.city.length < 1 || address.state == undefined || address.state.length < 1) {
+      //         this.addressesErrors = 'Address field is required';
+      //         console.log(this.addressesErrors);
+      //     } else {
+      //       if(this.addressesErrors?.length > 0) {
+      //         if(this.addressesErrors == 'Address field is required' && address.address && address.address.length > 0 && address.city && address.city.length > 0 && address.state && address.state.length > 0) {
+      //           this.addressesErrors = '';
+      //         } else {
+      //           this.addressesErrors;
+      //         } console.log(this.addressesErrors);
+      //       } else {
+      //         this.addressesErrors = '';
+      //         console.log(this.addressesErrors);
+      //       } console.log(this.addresses.state);
+      //     }
+      //   });
+      //   console.log(this.addressesErrors);
+      //   console.log(this.addressesErrors);
+      // } else {
+      //   this.addressesErrors = 'At least one address is required';
+      // } 
+      //   console.log(this.addressesErrors);
         // check first name error
       if(this.first_name.length < 1) {
         if(this.firstnameErrors.length > 0){
@@ -382,28 +681,6 @@ export default {
       } else{
         this.roleErrors = [];
       }
-      
-      // Check address error
-      if(this.address.length < 1) {
-        if(this.addressErrors.length > 0){
-           this.addressErrors[this.addressErrors.length - 1] = 'Address is required';
-        } else {
-          this.addressErrors.push('Address is required ');
-        }
-      } else{
-        this.addressErrors = [];
-      }
-      
-      // Check state error
-      if(this.state.length < 1) {
-        if(this.stateErrors.length > 0){
-           this.stateErrors[this.stateErrors.length - 1] = 'State is required';
-        } else {
-          this.stateErrors.push('State is required ');
-        }
-      } else{
-        this.stateErrors = [];
-      }
 
       this.disable = true;
     }
@@ -423,10 +700,13 @@ export default {
     border-color: #fe5461;
   }
   .buttonload {
-  border: none; /* Remove borders */
-  color: white; /* White text */
-  padding: 12px 24px; /* Some padding */
-  font-size: 16px; /* Set a font-size */
-}
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 12px 24px; /* Some padding */
+    font-size: 16px; /* Set a font-size */
+  }
+  .formulate-input .formulate-input-element {
+    max-width: none;  
+  }
 </style>
 

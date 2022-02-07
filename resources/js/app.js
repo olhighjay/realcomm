@@ -7,6 +7,10 @@
 require('./bootstrap');
 
 window.Vue = require("vue").default;
+
+import VueFormulate from '@braid/vue-formulate'
+
+Vue.use(VueFormulate)
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

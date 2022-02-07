@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <link rel="stylesheet" href="{{ asset('css/app-style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/dap.css') }}" />
     <!-- PLUGINS CSS STYLE -->
     <link href="{{ asset('assets/app/plugins/toaster/toastr.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/app/plugins/nprogress/nprogress.css') }}" rel="stylesheet" />

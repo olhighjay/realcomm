@@ -6,6 +6,21 @@
      <div v-if="failed" class="alert alert-danger alert-highlighted" role="alert">
         Server Error!.. Unable to complete your request.
      </div>
+     <FormulateInput
+      type="text"
+      label="Favorite car brand?"
+      validation="not:Toyota"
+      validation-name="car brand"
+      error-behavior="live"
+      v-model="brand"
+    />
+    <FormulateInput
+      type="radio"
+      v-model="brand"
+      error-behavior="live"
+      validation="in:Toyota,Honda"
+      :options="{Toyota: 'I like Toyota', Honda: 'I like Honda' }"
+    />
     <form @submit.prevent="handleSubmit" @change="emptyField()">
       <label class="text-dark font-weight-medium" for="name">Name</label>
       <div class="input-group">
@@ -54,6 +69,7 @@ export default {
       loading: 'neutral',
       successful: false,
       failed: false,
+      brand: 'Honda'
     }
   },
   methods: {
@@ -152,3 +168,7 @@ export default {
 </script>
 
 
+<style scoped>
+/* @import '../../node_modules/@braid/vue-formulate/themes/snow/snow.scss'; */
+
+</style>
